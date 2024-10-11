@@ -1,10 +1,11 @@
+<svelte:options accessors={true} />
 
 <script>
 
     import { createEventDispatcher } from 'svelte'
 
     let dispatch = createEventDispatcher();
-
+    
     export let palette = {"colors":{"white":"white","#0376A8":"#0376A8","black":"black"},"strokes":{"black":"black"}}
 
     function handleClick(event) {

@@ -12,6 +12,5 @@ import Male_3 from "./Svelte/Male_3.svelte";
 	"Eyes": { "1": Eyes_1 } , 
 	"Female": { "1": Female_1,"2": Female_2,"3": Female_3 } , 
 	"Male": { "1": Male_1,"2": Male_2,"3": Male_3 } , 
- }; 
- export default resources
-    
+ }; let palettes ={"Bodies":{"1":{"colors":{"#FE9574":"#FE9574"},"strokes":{"black":"black"}}},"Eyes":{"1":{"colors":{"white":"white","#0376A8":"#0376A8","black":"black"},"strokes":{"black":"black"}}},"Female":{"1":{"colors":{"#F19138":"#F19138"},"strokes":{"black":"black"}},"2":{"colors":{"#F19138":"#F19138"},"strokes":{"black":"black"}},"3":{"colors":{"#F19138":"#F19138"},"strokes":{"black":"black"}}},"Male":{"1":{"colors":{"#F19138":"#F19138"},"strokes":{"black":"black"}},"2":{"colors":{"#F19138":"#F19138"},"strokes":{"black":"black"}},"3":{"colors":{"#F19138":"#F19138"},"strokes":{"black":"black"}}}} 
+ export { resources, palettes }

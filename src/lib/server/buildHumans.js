@@ -33,12 +33,14 @@ async function clearDirectory(directory) {
 
 async function buildSvgs() {
 
-    let imports = []
-    let resources = {}
+    let imports = [];
+    let resources = {};
+    let paletteResources = {};
 
     for (let layer in folders) {
 
         let layerMap = {  }
+        let paletteLayerMap = {}
 
         let path = folders[layer].replace("$lib", $lib)
         let directory = await fs.readdir(path);
@@ -84,13 +86,14 @@ async function buildSvgs() {
                 palette.strokes[stroke] = stroke
             };
             
-            let svelteHeader = `
+            let svelteHeader = `<svelte:options accessors={true} />
+
 <script>
 
     import { createEventDispatcher } from 'svelte'
 
     let dispatch = createEventDispatcher();
-
+    
     export let palette = ${JSON.stringify(palette)}
 
     function handleClick(event) {
@@ -151,6 +154,8 @@ async function buildSvgs() {
             function merge(object) {
                 return JSON.stringify(Object.assign({}, ...object))
             }
+
+            // ------------------ Writing ----------------------- //
     
             let file = svelteHeader + svg
             let newFilename = `${layer}_${filename}.svelte`
@@ -158,17 +163,24 @@ async function buildSvgs() {
             await fs.writeFile(output + `/${newFilename}`, file)
 
             layerMap[filename] = `${newFilename.split('.')[0]}`
+            paletteLayerMap[filename] = palette
+
             imports.push(`import ${newFilename.split('.')[0]} from "./${outputFolderName}/${newFilename}"; \n`)
         };
 
+        paletteResources[layer] = paletteLayerMap;
         resources[layer] = layerMap
     }
+
+    // ---------------- Index JS -------------------- //
     
     imports = imports.join('')
+
     let exports = []
 
     // Create pseudo json that enables 
     // the calling of the imported variable
+
     for (let layer in resources) {
 
         let obj = []
@@ -180,13 +192,10 @@ async function buildSvgs() {
         };
 
         exports.push(`\t"${layer}": { ${obj.join(',')} } , \n`)
-        
     }
 
-    exports = `\n let resources = { \n ${exports.join('')} }; \n export default resources
-    `
 
-    String().trim()
+    exports = `\n let resources = { \n ${exports.join('')} }; \n let palettes =${JSON.stringify(paletteResources)} \n export { resources, palettes }`
 
     let indexjs = imports  + exports
 

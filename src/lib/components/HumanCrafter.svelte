@@ -7,14 +7,26 @@
     import RadioText from "./RadioText.svelte";
 	import FloatingColorPicker from "./FloatingColorPicker.svelte";
 
-    let gender = 'male';
-    let hair = 1;
+    import { palettes } from "./People";
 
-    let hairPalette = {"colors":{"#F19138":"#F19138"},"strokes":{"black":"black"}}
-    let bodyPalette = {"colors":{"#FE9574":"#FE9574"},"strokes":{"black":"black"}}
-    let eyePalette = {"colors":{"white":"white","#0376A8":"#0376A8","black":"black"},"strokes":{"black":"black"}}
+    let gender = 0;
+    let hair = 1;
+    let eye = 1
+    let body = 1
+
+    let hairPalette = gender? palettes.Female[hair]: palettes.Male[hair];
+    let bodyPalette = palettes.Bodies[body]
+    let eyePalette = palettes.Eyes[eye]
+
+    console
 
     // --------- Input Changes -----------------// 
+
+    // These inputs assume the models are the default ones
+    // that is body 1, Eye 1, Gender 0|1 e Hairs 1, 2, 3
+    // This piece of code will probably be doomed to forever
+    // be this default character creation. I am not willing to 
+    // change everything again
 
     // event.detail
     function handleGenderChange({ detail: { option } }) {
@@ -25,19 +37,16 @@
         hair = option.value
     };
 
-    function handleHairColorChange({detail: {option}}) {
-        hairColor = option.value
-    }
+    function handleHumanColorChange(reactiveCallback, palette, defaultColor, event) {
+        palette.colors[defaultColor] = event.detail.option.value
 
-    function handleSkinColorChange({detail: {option}}) {
-        skinColor = option.value
-    }
-
-    function handleEyeColorChange({detail: {option}}) {
-        eyeColor = option.value
-    }
+        reactiveCallback(palette)
+    };
 
     // ---------- Floating Color Picker  ------------- //
+
+    // This is the more advanced one that enables color picking
+    // the svg path specifically
 
     let handleNewPalette = () => {} 
 
@@ -96,6 +105,7 @@
              and the pallete of asset that was click, that is going to be hand down to the color
              picker variables.  
         -->
+        
             
         <Human 
             zoom=0.85 
@@ -117,8 +127,8 @@
             <Span>Gênero</Span>
             <RadioText 
                 options={[
-                    { label: 'Homem', color: '#95b8fa', value: 'male' },
-                    { label: 'Mulher', color: '#fa9595', value: 'female'}
+                    { label: 'Homem', color: '#95b8fa', value: 0 },
+                    { label: 'Mulher', color: '#fa9595', value: 1}
                 ]}
                 on:select={handleGenderChange}
             />
@@ -138,16 +148,16 @@
                     { label: 'Castanho',  color: "#4f1a00", value: "#4f1a00"},
                     { label: 'Loiro',  color: "#ffb36c", value: '#F19138'},
                 ]}
-                on:select={handleHairColorChange}
+                on:select={event => handleHumanColorChange(palette => hairPalette = palette, hairPalette, "#F19138", event)}
             />
             <Span>Pele</Span>
             <RadioText 
                 options={[
-                    { label: 'Branco', color: "#d1d1d1", text: "#000000", value: "#d1d1d1" },
-                    { label: 'Pardo',  color: "#ECB176", value: "#ECB176"},
+                    { label: 'Branco', color: "#d1d1d1", text: "#000000", value: "#FE9574" },
+                    { label: 'Pardo',  color: "#ECB176", value: "#c68642"},
                     { label: 'Negro',  color: "#6F4E37", value: '#6F4E37'},
                 ]}
-                on:select={handleHairColorChange}
+                on:select={event => handleHumanColorChange(palette => bodyPalette = palette, bodyPalette, "#FE9574", event)}
             />
             <Span>Olhos</Span>
             <RadioText 
@@ -156,7 +166,7 @@
                     { label: 'Verde',  color: "#3d671d", value: "#3d671d"},
                     { label: 'Castanho',  color: "#634e34", value: '#634e34'},
                 ]}
-                on:select={handleHairColorChange}
+                on:select={event => handleHumanColorChange(palette => eyePalette = palette, eyePalette, "#0376A8", event)}
             />
         </div>
     </div>
