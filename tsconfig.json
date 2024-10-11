@@ -2,7 +2,9 @@
 	"extends": "./.svelte-kit/tsconfig.json",
 	"compilerOptions": {
 		"allowJs": true,
-		"checkJs": true,
+		// We need to disable this whenever creating a new template, 
+		// because it disables javascript type checking
+		"checkJs": false, 
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"resolveJsonModule": true,
